@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"encoding/json"
+    "github.com/gin-gonic/gin"
 	"github.com/shurcooL/graphql"
 	"net/http"
 )
@@ -28,35 +28,26 @@ func init() {
 }
 
 func main() {
-    server := http.Server{
-       Addr: "127.0.0.1:8080",
-    }
-    http.HandleFunc("/pools/", getPools)
-    server.ListenAndServe()
+    router := gin.Default()
+    router.GET("/pools", getPools)
+    router.Run("localhost:8080")
 }
 
-func getPools(w http.ResponseWriter, r *http.Request) {
-    /* decode */
-	decoder := json.NewDecoder(r.Body)
-	var asset Asset
-	err := decoder.Decode(&asset)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+func getPools(c *gin.Context) {
+    var asset Asset
+    if err := c.BindJSON(&asset); err != nil {
+        c.IndentedJSON(http.StatusInternalServerError, err.Error())
+        return
+    }
+
     poolQ, err := queryPools(asset.Id)
     if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError) // replace with other error?
+        c.IndentedJSON(http.StatusInternalServerError, err.Error())
+        // replace with other error?
         return
     }
-    encoder := json.NewEncoder(w)
-    err = encoder.Encode(poolQ)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    w.Header().Set("Content-Type", "application/json")
-    return
+
+    c.IndentedJSON(http.StatusOK, poolQ)
 }
 
 // graphql logic + request(s)
