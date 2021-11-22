@@ -60,10 +60,19 @@ func getPools(c *gin.Context) {
 }
 
 // graphql logic + request(s)
-func queryPools(assetId string) (poolQ PoolQ, err error) {
+func queryPools(assetId string) (pools PoolQ, err error) {
+    var poolQ0 struct {
+        Pools []Pool `graphql:"pools(where: { token0: $assetId } orderyBy: volumeUSD orderDirection: desc)"`
+    }
+
+    var poolQ1 struct {
+        Pools []Pool `graphql:"pools(where: { token1: $assetId } orderyBy: volumeUSD orderDirection: desc)"`
+    }
 	variables := map[string]interface{}{
 		"assetId": graphql.ID(assetId),
 	}
-	err = client.Query(context.Background(), &poolQ, variables)
+	err = client.Query(context.Background(), &poolQ0, variables)
+	err = client.Query(context.Background(), &poolQ1, variables)
+    pools.Pools = append(poolQ0.Pools, poolQ1.Pools...)
     return
 }
