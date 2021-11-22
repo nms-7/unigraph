@@ -9,16 +9,25 @@ import (
 
 // type address string
 
-type Asset struct {
+type AssetPoolsRequest struct {
 	Id string `json:"id"`
+    Verbose bool `json:"verbose"`
 }
 
 type PoolQ struct {
-	Pools []Pool `graphql:"pools(first: 2 where: { token0: $assetId })"`
+    Pools []Pool `graphql:"pools(where: { token0: $assetId } orderyBy: volumeUSD orderDirection: desc)" json:"pools"`
 }
 
+
 type Pool struct {
-	Id graphql.String
+    Id graphql.String `json:"id"`
+    Token0 Token `json:"token0"`
+    Token1 Token `json:"token1"`
+}
+
+type Token struct {
+    Id graphql.String `json:"id"`
+    Symbol graphql.String `json:"symbol"`
 }
 
 var client *graphql.Client
@@ -34,13 +43,13 @@ func main() {
 }
 
 func getPools(c *gin.Context) {
-    var asset Asset
-    if err := c.BindJSON(&asset); err != nil {
+    var request AssetPoolsRequest
+    if err := c.BindJSON(&request); err != nil {
         c.IndentedJSON(http.StatusInternalServerError, err.Error())
         return
     }
 
-    poolQ, err := queryPools(asset.Id)
+    poolQ, err := queryPools(request.Id)
     if err != nil {
         c.IndentedJSON(http.StatusInternalServerError, err.Error())
         // replace with other error?
