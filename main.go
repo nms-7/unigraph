@@ -5,6 +5,7 @@ import (
     "github.com/gin-gonic/gin"
 	"github.com/shurcooL/graphql"
 	"net/http"
+    "sync"
 )
 
 // type address string
@@ -71,8 +72,20 @@ func queryPools(assetId string) (pools PoolQ, err error) {
 	variables := map[string]interface{}{
 		"assetId": graphql.ID(assetId),
 	}
-	err = client.Query(context.Background(), &poolQ0, variables)
-	err = client.Query(context.Background(), &poolQ1, variables)
+    var wg sync.WaitGroup
+    wg.Add(2)
+    go queryGraph(&poolQ0, variables, &wg)
+    go queryGraph(&poolQ1, variables, &wg)
+    wg.Wait()
+    // chan for appending?
     pools.Pools = append(poolQ0.Pools, poolQ1.Pools...)
+    // wait for both queries to complete
+    // benchmark this methodology for proof of implementation
     return
+}
+
+// add chan to pass errors?
+func queryGraph(query interface{}, variables map[string]interface{}, wg *sync.WaitGroup) {
+    client.Query(context.Background(), query, variables)
+    wg.Done()
 }
