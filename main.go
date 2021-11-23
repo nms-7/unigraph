@@ -12,11 +12,10 @@ import (
 
 type AssetPoolsRequest struct {
 	Id string `json:"id"`
-    Verbose bool `json:"verbose"`
 }
 
-type PoolQ struct {
-    Pools []Pool `graphql:"pools(where: { token0: $assetId } orderyBy: volumeUSD orderDirection: desc)" json:"pools"`
+type AssetPoolsResponse struct {
+    Pools []Pool `json:"pools"`
 }
 
 
@@ -50,18 +49,18 @@ func getPools(c *gin.Context) {
         return
     }
 
-    poolQ, err := queryPools(request.Id)
+    response, err := queryPools(request.Id)
     if err != nil {
         c.IndentedJSON(http.StatusInternalServerError, err.Error())
         // replace with other error?
         return
     }
 
-    c.IndentedJSON(http.StatusOK, poolQ)
+    c.IndentedJSON(http.StatusOK, response)
 }
 
 // graphql logic + request(s)
-func queryPools(assetId string) (pools PoolQ, err error) {
+func queryPools(assetId string) (pools AssetPoolsResponse, err error) {
     var poolQ0 struct {
         Pools []Pool `graphql:"pools(where: { token0: $assetId } orderyBy: volumeUSD orderDirection: desc)"`
     }
@@ -79,6 +78,7 @@ func queryPools(assetId string) (pools PoolQ, err error) {
     wg.Wait()
     // chan for appending?
     pools.Pools = append(poolQ0.Pools, poolQ1.Pools...)
+    // sort?
     // wait for both queries to complete
     // benchmark this methodology for proof of implementation
     return
