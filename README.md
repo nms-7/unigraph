@@ -8,9 +8,8 @@
 - all time input and ouput will be Unix timestamps
 
 **Routes:**
-- `api/v1/pools/{asset_id}` - returns pools that include asset
-- `api/v1/volume/{asset_id}` - returns total volume of asset swapped 
-	- note ** time range ** will have to be accounted for
+- `api/v1/pools/` - returns pools that include **given asset**
+- `api/v1/volume/` - returns total volume of **given asset** swapped in **given time range**
 
 **Bonus Routes:**
 - `api/v1/swaps/{block_num}` - returns list of swaps that occurred during specific block
