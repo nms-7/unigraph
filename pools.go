@@ -59,5 +59,3 @@ func queryPools(assetId string) (pools AssetPoolsResponse, err error) {
 	pools.Pools = append(poolQ0.Pools, poolQ1.Pools...)
 	return
 }
-
-
