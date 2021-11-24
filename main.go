@@ -22,6 +22,7 @@ func main() {
 	router.GET("/asset/pools", getPools)
 	router.GET("/asset/volume", getVolume)
 	router.GET("/block/swaps", getSwaps)
+	router.GET("/block/assets", getBlockAssets)
 	router.Run("localhost:8080")
 }
 

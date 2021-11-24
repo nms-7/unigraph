@@ -12,8 +12,8 @@
 - `api/v1/volume/` - returns total volume of **given asset** swapped in **given time range**
 
 **Bonus Routes:**
-- `api/v1/swaps/{block_num}` - returns list of swaps that occurred during specific block
-- `api/v1/assets/{block_num}` - returns list of all assets swapped during specific block
+- `api/v1/swaps/` - returns list of swaps that occurred during specific block **given block number**
+- `api/v1/assets/` - returns list of all assets swapped during specific block **given block number**
 
 Route organization subject to change, but will continue to be answer the same questions.
 
