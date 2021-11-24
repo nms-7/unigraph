@@ -17,4 +17,10 @@
 
 Route organization subject to change, but will continue to be answer the same questions.
 
+### To RUN
+
+**with included build file:** `./unigraph`
+
+try the example queries in the `examples` directory by running the individual shell files, or build your own queries with curl, postman, or any other http requests utility
+
 
