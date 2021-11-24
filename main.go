@@ -20,6 +20,7 @@ func init() {
 func main() {
 	router := gin.Default()
 	router.GET("/asset/pools", getPools)
+	router.GET("/asset/volume", getVolume)
 	router.Run("localhost:8080")
 }
 
